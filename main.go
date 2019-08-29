@@ -32,6 +32,14 @@ func main() {
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(messageCreate)
 
+	// Create status message
+	dg.AddHandler(func(dg *discordgo.Session, ready *discordgo.Ready) {
+		err = dg.UpdateStatus(0, "Hello UNT!")
+		if err != nil {
+			fmt.Println("Error attempting to set status")
+		}
+	})
+
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
 	if err != nil {
