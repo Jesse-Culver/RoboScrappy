@@ -8,11 +8,13 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/sirupsen/logrus"
 )
 
-// Variables used for command line parameters
+// Variables used throughout
 var (
 	Token string
+	log   = logrus.New()
 )
 
 func init() {
@@ -21,6 +23,14 @@ func init() {
 }
 
 func main() {
+
+	// Begin log setup
+	file, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err == nil {
+		log.Out = file
+	} else {
+		log.Info("Failed to log to file, using default stderr")
+	}
 
 	// Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New("Bot " + Token)
@@ -86,6 +96,12 @@ func messageCreate(session *discordgo.Session, message *discordgo.MessageCreate)
 	}
 
 	fmt.Println("Message from " + member.User.Username + " received: " + message.Content)
+	log.WithFields(logrus.Fields{
+		"User":    member.User.Username,
+		"UserID":  member.User.ID,
+		"Channel": message.ChannelID,
+		"Message": message.Content,
+	}).Info("User Message")
 
 	if message.Content == "$Ping" {
 		session.ChannelMessageSend(message.ChannelID, "Pong!")
