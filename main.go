@@ -66,7 +66,26 @@ func messageCreate(session *discordgo.Session, message *discordgo.MessageCreate)
 		return
 	}
 
-	fmt.Println("Message " + m.Content + " received!")
+	// Check if we get an error finding channel, guild, or member
+	// Thank you to clinet for snippet https://github.com/clinet/clinet/blob/master/messages.go
+	channel, err := session.State.Channel(message.ChannelID)
+	if err != nil {
+		return //Error finding the channel
+	}
+	guild, err := session.State.Guild(channel.GuildID)
+	if err != nil {
+		return //Error finding the guild
+	}
+	content := message.Content
+	if content == "" {
+		return //The message was empty
+	}
+	member, err := session.GuildMember(guild.ID, message.Author.ID)
+	if err != nil {
+		return //Error finding the guild member
+	}
+
+	fmt.Println("Message from " + member.User.Username + " received: " + message.Content)
 
 	if message.Content == "$Ping" {
 		session.ChannelMessageSend(message.ChannelID, "Pong!")
