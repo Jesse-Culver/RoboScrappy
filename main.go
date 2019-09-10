@@ -25,7 +25,7 @@ func init() {
 func main() {
 
 	// Begin log setup
-	file, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := os.OpenFile("Discord.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err == nil {
 		log.Out = file
 	} else {
@@ -103,7 +103,7 @@ func messageCreate(session *discordgo.Session, message *discordgo.MessageCreate)
 		"Message": message.Content,
 	}).Info("User Message")
 
-	if message.Content == "$Ping" {
-		session.ChannelMessageSend(message.ChannelID, "Pong!")
-	}
+	// if message.Content == "$Ping" {
+	// 	session.ChannelMessageSend(message.ChannelID, "Pong!")
+	// }
 }
